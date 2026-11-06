@@ -345,7 +345,22 @@ drop it on the composer; a multi-selection drops together. On any client, **Copy
 link to the thread that pastes into a composer as its chip. The chip shows the thread's
 current title and opens it when selected. Your prompt only carries a reference: the agent reads the thread's
 history on demand, so attaching a long thread costs nothing until the agent looks. Attaching a
-thread does not change it, and the agent cannot send messages to it unless you ask.
+thread does not change it, and the agent sends messages to it only when you ask.
+
+### Let threads talk to each other
+
+Threads can coordinate while they work, such as a Backend thread and a Frontend thread building
+two sides of one feature. Mention the other thread with `@` and say what to do, for example
+"agree on the `/users` response shape with @Backend, then build the page". The agent messages
+that thread, and its agent can answer back the same way. An idle thread starts working on a
+message right away; a working thread gets it during its current turn when the provider can take
+it mid-turn, and right after that turn otherwise.
+
+Messages from another thread's agent fold to one line in the receiving thread; expand it to read
+the message. On web and desktop the line names the sending thread and opens it. Agents answer questions and
+requests, not acknowledgements, so a conversation ends when nobody is waiting on an answer. Stop
+either thread to end it sooner. A thread can only message a thread whose permission mode is no
+broader than its own, so give both threads the same mode when they need to talk both ways.
 
 A thread from a linked machine, picked, pasted or dropped, stays a reference that the agent reads
 on that machine. A pasted link to a thread on any other machine stays a link. Dropping a thread

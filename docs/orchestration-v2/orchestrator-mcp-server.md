@@ -451,6 +451,17 @@ The target runtime and interaction modes may not be broader than the caller's.
 Stable command and message IDs are derived from `clientRequestId` for
 idempotent retries.
 
+The message records the calling thread as `senderThreadId`. When it reaches the
+target's provider, at turn start or as a steer, the text is headed with the
+sender's title and thread ID
+([`ThreadMessageSender.ts`](../../apps/server/src/orchestration-v2/ThreadMessageSender.ts)),
+so two top-level threads can hold a conversation: the receiver answers with its
+own `t3_thread_send`. The persisted message stays unheaded. A delegating parent
+gets no header, because its child reports back through the task, and slash
+commands are sent verbatim. The orchestration instructions name that header and
+forbid acknowledgement replies, which is what keeps two agents from replying to
+each other forever.
+
 ### `t3_thread_wait`
 
 Waits for a selected run to become `completed`, `failed`, `cancelled`,
