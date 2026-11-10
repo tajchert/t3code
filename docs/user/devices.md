@@ -96,6 +96,31 @@ local network, Tailscale, and T3 Connect. Live video needs a secure page
 (HTTPS or localhost); on a plain-HTTP remote origin iOS falls back to a slower
 still-image stream and Android cannot show video, except on EAS Simulator.
 
+## Share a phone from your computer
+
+A phone plugged into the computer running the T3 Code desktop app can appear
+as an ordinary Android device on another environment, so its Device panel and
+its agents can use it. The phone shows up as "Shared from" your computer.
+
+You need Android platform-tools (`adb`) on both machines, and USB debugging
+turned on in the phone's developer options. T3 Code does not install adb.
+
+In the desktop app, open **Settings → Devices**, select the remote
+environment, and switch on the phone under **This computer's devices**. The
+section is not shown for the desktop's own environment. The first time, the
+phone asks "Allow USB debugging?" for the remote machine's key; accept it on
+the phone. Sharing resumes by itself after a dropped connection once the phone
+and the environment are both back.
+
+Some things are not obvious:
+
+- Sharing ends when the desktop app quits, and the phone returns to USB-only
+  mode.
+- While a phone is shared, its adb also listens on Wi-Fi, so anyone on your
+  network who can reach the phone may try to connect. Unshare when you are done.
+- `adb forward` and `adb reverse` ports opened for the shared phone are opened
+  on the remote machine, not on yours.
+
 ## SSH device hosts
 
 In Settings → Devices, choose the environments that should use

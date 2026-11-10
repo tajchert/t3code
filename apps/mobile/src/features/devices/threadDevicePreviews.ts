@@ -13,7 +13,12 @@ export function threadDevicePreviews(state: DeviceServiceState | null, threadId:
         key: JSON.stringify([session.hostId, session.deviceId]),
         session,
         name: device?.name ?? (session.platform === "ios" ? "iOS Simulator" : "Android Emulator"),
-        description: [device?.version, host?.label].filter(Boolean).join(" · "),
+        description: [
+          device?.version,
+          device?.sharedFrom ? `Shared from ${device.sharedFrom}` : host?.label,
+        ]
+          .filter(Boolean)
+          .join(" · "),
         serveSimOnly: host?.kind === "simlock",
       };
     });

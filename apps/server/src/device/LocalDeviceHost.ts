@@ -124,7 +124,7 @@ const platformReason = Effect.fn("LocalDeviceHost.platformReason")(function* (
   return null;
 });
 
-const androidSdk = Effect.gen(function* () {
+export const androidSdk = Effect.gen(function* () {
   const fs = yield* FileSystem.FileSystem;
   const path = yield* Path.Path;
   const environment = yield* HostProcess.Environment;

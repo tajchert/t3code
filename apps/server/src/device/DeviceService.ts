@@ -79,6 +79,7 @@ import * as HostProcess from "@t3tools/shared/HostProcess";
 import { makeExpoApi } from "./ExpoApi.ts";
 import * as Exit from "effect/Exit";
 import * as LocalDeviceHost from "./LocalDeviceHost.ts";
+import * as AdbBridge from "./AdbBridge.ts";
 
 export const DEVICE_HUB_ROUTE_PREFIX = "/api/device-hub";
 
@@ -280,6 +281,7 @@ export const makeWithHosts = Effect.fn("DeviceService.makeWithHosts")(function* 
   const settings = yield* ServerSettings.ServerSettingsService;
   const digest = yield* Digest.Digest;
   const lifecycleLock = yield* Semaphore.make(1);
+  const adbBridge = yield* Effect.serviceOption(AdbBridge.AdbBridge);
   const readDeviceSettings = settings.getSettings.pipe(
     Effect.map((value) => ({
       enabled: value.enableDeviceSupport,
@@ -555,7 +557,11 @@ export const makeWithHosts = Effect.fn("DeviceService.makeWithHosts")(function* 
     const { devices, detail, androidDiscoveryIncomplete, incompletePlatforms } =
       yield* ready.devices.list;
     return {
-      devices: devices.map((device): DeviceSummary => ({ ...device, hostId: ready.hostId })),
+      devices: yield* AdbBridge.markShared(
+        adbBridge,
+        ready.hostId,
+        devices.map((device): DeviceSummary => ({ ...device, hostId: ready.hostId })),
+      ),
       detail,
       androidDiscoveryIncomplete,
       incompletePlatforms: incompletePlatforms ?? [],
@@ -1422,6 +1428,7 @@ export const make = Effect.gen(function* () {
       ),
     launchers,
   );
+  yield* AdbBridge.refreshDevicesOnChange(service);
   const hostContext =
     yield* Effect.context<Effect.Services<ReturnType<typeof SshDeviceHost.make>>>();
   const easContext =

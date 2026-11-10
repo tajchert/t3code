@@ -12,6 +12,7 @@ import { contextBridge, ipcRenderer, webFrame, webUtils } from "electron";
 
 import * as IpcChannels from "./ipc/channels.ts";
 import { mergeLegacyLocalStorage } from "./legacyLocalStorageMerge.ts";
+import { androidShareBridge } from "./devices/androidSharePreload.ts";
 
 const SNAP_SHOT_EVENT_TYPES = new Set([
   "requested",
@@ -470,4 +471,5 @@ contextBridge.exposeInMainWorld("desktopBridge", {
         ipcRenderer.removeListener(IpcChannels.PREVIEW_OPEN_LINK_CHANNEL, wrappedListener);
     },
   },
+  ...androidShareBridge,
 } satisfies DesktopBridge);

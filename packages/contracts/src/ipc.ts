@@ -1,6 +1,11 @@
 import * as Schema from "effect/Schema";
 import type { PreviewCaptureFailureEncoded } from "./previewCapture.ts";
 
+import type {
+  DesktopAndroidShareStartInput,
+  DesktopAndroidShareState,
+  DesktopAndroidShareStopInput,
+} from "./adbBridge.ts";
 import { SnapShotSource } from "./chatAttachment.ts";
 import { EnvironmentId, TrimmedNonEmptyString } from "./baseSchemas.ts";
 import { BrowserProfileId } from "./browserProfile.ts";
@@ -1057,6 +1062,16 @@ export interface DesktopBridge {
   setLocalEnvironmentEnabled: (enabled: boolean) => Promise<void>;
   /** The environment ID recorded in this app's T3 home, such as its own machine's background service. */
   getHostEnvironmentId?: () => Promise<string | null>;
+  /**
+   * Android phones attached to this computer and their adb-bridge shares.
+   * While `watching`, the main process polls adb and pushes changes through
+   * `onAndroidShareState`. Absent on builds without the adb bridge.
+   */
+  getAndroidShareState?: () => Promise<DesktopAndroidShareState>;
+  setAndroidShareWatching?: (watching: boolean) => Promise<void>;
+  startAndroidShare?: (input: DesktopAndroidShareStartInput) => Promise<void>;
+  stopAndroidShare?: (input: DesktopAndroidShareStopInput) => Promise<void>;
+  onAndroidShareState?: (listener: (state: DesktopAndroidShareState) => void) => () => void;
   getLocalEnvironmentBearerToken: () => Promise<string>;
   getClientSettings: () => Promise<ClientSettings | null>;
   setClientSettings: (settings: ClientSettings) => Promise<void>;
