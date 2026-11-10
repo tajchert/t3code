@@ -85,6 +85,27 @@ screen changes, so the proxy
 short quiet period. In browser dev, the Vite proxy must forward WebSocket
 upgrades for `/api`, not only `/ws`.
 
+## Shared phones arrive as an adb device stream
+
+A phone on the desktop's USB becomes an ordinary adb device on a remote
+environment through the [adb bridge](../../apps/server/src/device/AdbBridge.ts):
+the desktop puts the phone in `tcpip` mode, forwards a local port to it, and
+tunnels that one TCP stream over a dedicated WebSocket. The environment listens
+on a loopback port and runs `adb connect 127.0.0.1:<port>`, so the hub lists it
+like any physical device. Forwarding the laptop's adb server port instead would
+break three ways: a remote adb client of another version kills the laptop's
+server, `adb reverse` would land on the laptop, and every remote process would
+need `ADB_SERVER_SOCKET` set.
+
+The socket carries one TCP stream at a time. Binary frames are its bytes; text
+frames are control. Only the environment sends `open`, when its adb server
+connects to the listener and no stream is open; a connection while one is open
+or closing is refused, and adb retries. Either side sends `close` when its TCP
+end finishes and drops binary frames until the peer answers `closed` after
+closing its own end. Only then may another `open` follow, so bytes from an old
+stream never reach a new one. Effect's WebSocket writer does not wait for the
+peer, so the route waits on the upgraded connection's `drain` itself.
+
 ## Device settings never go through the hub
 
 serve-sim's preview drives its Tools panel by sending shell commands over that

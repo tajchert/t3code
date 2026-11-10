@@ -180,6 +180,8 @@ export const DeviceSummary = Schema.Struct({
   version: Schema.String,
   booted: Schema.Boolean,
   physical: Schema.Boolean,
+  // Set for a phone another computer shares over the adb bridge: that computer's name.
+  sharedFrom: Schema.optional(TrimmedNonEmptyString),
 });
 export type DeviceSummary = typeof DeviceSummary.Type;
 

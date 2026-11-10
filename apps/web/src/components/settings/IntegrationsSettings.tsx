@@ -3,6 +3,7 @@ import { DeviceHostUpdates } from "../device/DeviceHostUpdates";
 import { DeviceToolVersions } from "../device/DeviceToolVersions";
 import { useScopedSettings, useUpdateScopedSettings } from "./useScopedSettings";
 import { ScopedSwitch } from "./ScopedSwitch";
+import { AndroidShareSettings } from "./AndroidShareSettings";
 import { DeviceSourcesSettings } from "./DeviceSourcesSettings";
 import {
   AuthSettingsWriteScope,
@@ -889,6 +890,7 @@ function DeviceIntegrationSettings() {
         supportsEas={state.supportsEasHosts === true}
         supportsSimlock={state.supportsSimlockHosts === true}
       />
+      <AndroidShareSettings />
     </>
   );
 }
