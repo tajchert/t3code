@@ -214,3 +214,7 @@ Architecture and its constraints: `docs/internals/overview.md`. Glossary: `docs/
 
 - Security is important, but should not be over-indexed on, especially for dev mode/maintainer-only features.
 - Before a security audit or triaging a vulnerability report, read [SECURITY.md](SECURITY.md) for the trust model and what is intended.
+
+## Fork
+
+This checkout is a fork with its own branch model, build flavor and rebase rules. Read [FORK.md](FORK.md) before changing upstream files.
