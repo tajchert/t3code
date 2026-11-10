@@ -31,6 +31,9 @@ export class DesktopUserDataInitializationError extends Schema.TaggedError<Deskt
   }
 }
 
+// Fork flavor: boot.ts sets this for packaged builds. See FORK.md.
+const PRODUCTION_USER_DATA_DIR = process.env.T3CODE_DESKTOP_USER_DATA_DIR || "t3code-v2";
+
 export const resolveUserDataPath = Effect.fn("desktop.userData.resolveUserDataPath")(
   function* (input: {
     readonly appDataDirectory: string;
@@ -41,7 +44,10 @@ export const resolveUserDataPath = Effect.fn("desktop.userData.resolveUserDataPa
     const path = yield* Path.Path;
     const names = input.isDevelopment
       ? { current: "t3code-dev", legacy: "T3 Code (Dev)" }
-      : { current: "t3code-v2", legacy: "T3 Code (Alpha)" };
+      : {
+          current: PRODUCTION_USER_DATA_DIR,
+          legacy: "T3 Code (Alpha)",
+        };
     const destinationPath = path.join(input.appDataDirectory, names.current);
     const legacyPath = path.join(input.appDataDirectory, names.legacy);
     const inspect = (resourcePath: string) =>
